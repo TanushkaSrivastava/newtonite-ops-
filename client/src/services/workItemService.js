@@ -114,4 +114,12 @@ export const workItemService = {
       pagination: res.pagination || { page: 1, limit: 20, total: 0, totalPages: 1 },
     };
   },
+
+  async addComment(id, comment) {
+    const res = await request(`/work-items/${id}/comments`, {
+      method: 'POST',
+      body: { comment },
+    });
+    return res.data;
+  },
 };

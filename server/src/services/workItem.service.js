@@ -415,6 +415,18 @@ async function getWorkItems(query, userId) {
   };
 }
 
+async function addComment(id, { comment }, userId) {
+  const workItem = await getWorkItemById(id, userId);
+  const activity = await recordActivity({
+    teamId: workItem.team._id || workItem.team,
+    workItemId: workItem._id,
+    actorId: userId,
+    action: "COMMENT_ADDED",
+    metadata: { comment: comment.trim() },
+  });
+  return activity;
+}
+
 module.exports = {
   createWorkItem,
   getWorkItemById,
@@ -422,5 +434,6 @@ module.exports = {
   assignWorkItem,
   transitionWorkItem,
   getWorkItems,
+  addComment,
   ALLOWED_TRANSITIONS,
 };

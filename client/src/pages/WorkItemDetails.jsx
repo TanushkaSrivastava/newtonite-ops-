@@ -16,6 +16,8 @@ import {
   Save,
   X,
   History,
+  MessageSquare,
+  Send,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -55,6 +57,42 @@ export function WorkItemDetails() {
 
   // Assignee selection state
   const [selectedAssignee, setSelectedAssignee] = useState('');
+
+  // Comment composer state
+  const [commentText, setCommentText] = useState('');
+  const [commentLoading, setCommentLoading] = useState(false);
+
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    if (!commentText.trim() || !item) return;
+    setCommentLoading(true);
+    try {
+      if (isDemoMode()) {
+        setActivities((prev) => [
+          {
+            id: `act-${Date.now()}`,
+            action: 'COMMENT_ADDED',
+            actor: user,
+            metadata: { comment: commentText.trim() },
+            createdAt: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        setCommentText('');
+        setSuccessMessage('Comment posted.');
+        return;
+      }
+      await workItemService.addComment(item.id, commentText.trim());
+      setCommentText('');
+      setSuccessMessage('Comment added to work item.');
+      const actRes = await workItemService.getWorkItemActivities(item.id);
+      setActivities(actRes.activities || []);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setCommentLoading(false);
+    }
+  };
 
   const fetchItemDetails = useCallback(
     async (isSilent = false) => {
@@ -510,10 +548,34 @@ export function WorkItemDetails() {
             <div className="card-header-row">
               <div className="flex items-center gap-2">
                 <History size={16} className="text-secondary" />
-                <h3 className="card-section-title">Audit Activity Trail</h3>
+                <h3 className="card-section-title">Audit Activity Trail & Comments</h3>
               </div>
-              <span className="count-pill">{activities.length} events</span>
+              <span className="count-pill">{activities.length} entries</span>
             </div>
+
+            {/* Comment Composer */}
+            <form onSubmit={handleAddComment} className="comment-composer-form mb-4">
+              <div className="comment-input-row">
+                <input
+                  type="text"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Post an operational update or comment on this ticket..."
+                  className="comment-text-input"
+                  maxLength={2000}
+                />
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="sm"
+                  loading={commentLoading}
+                  disabled={!commentText.trim()}
+                  icon={Send}
+                >
+                  Comment
+                </Button>
+              </div>
+            </form>
 
             <div className="audit-timeline-container">
               {activities.length === 0 ? (
@@ -524,14 +586,16 @@ export function WorkItemDetails() {
                 <ol className="audit-timeline">
                   {activities.map((act) => (
                     <li key={act.id} className="audit-timeline-entry">
-                      <div className="timeline-marker" />
+                      <div className={`timeline-marker ${act.action === 'COMMENT_ADDED' ? 'marker-comment' : ''}`} />
                       <div className="timeline-entry-content">
                         <div className="timeline-entry-header">
                           <span className="timeline-actor">
                             {act.actor?.name || 'Operator'}
                           </span>
                           <span className="timeline-action-label">
-                            {act.action === 'STATUS_CHANGED'
+                            {act.action === 'COMMENT_ADDED'
+                              ? 'commented'
+                              : act.action === 'STATUS_CHANGED'
                               ? 'transitioned status'
                               : act.action === 'ASSIGNEE_CHANGED'
                               ? 'updated assignment'
@@ -543,6 +607,12 @@ export function WorkItemDetails() {
                             {formatDate(act.createdAt)}
                           </span>
                         </div>
+
+                        {act.action === 'COMMENT_ADDED' && act.metadata?.comment && (
+                          <div className="timeline-comment-bubble">
+                            <p className="comment-bubble-text">{act.metadata.comment}</p>
+                          </div>
+                        )}
 
                         {act.changes && act.changes.length > 0 && (
                           <div className="timeline-diff-box">

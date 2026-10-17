@@ -7,6 +7,7 @@ const {
   updateWorkItemSchema,
   assignWorkItemSchema,
   transitionWorkItemSchema,
+  addCommentSchema,
 } = require("../validators/workItem.validator");
 
 const router = express.Router();
@@ -25,5 +26,10 @@ router.post(
   workItemController.transitionWorkItem
 );
 router.get("/:id/activity", workItemController.getWorkItemActivities);
+router.post(
+  "/:id/comments",
+  validate(addCommentSchema),
+  workItemController.addComment
+);
 
 module.exports = router;

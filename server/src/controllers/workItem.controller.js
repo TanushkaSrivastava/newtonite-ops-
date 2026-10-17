@@ -116,6 +116,22 @@ async function getWorkItemActivities(req, res, next) {
   }
 }
 
+async function addComment(req, res, next) {
+  try {
+    const activity = await workItemService.addComment(
+      req.params.id,
+      req.body,
+      req.user.id
+    );
+    res.status(201).json({
+      success: true,
+      data: activity,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   createWorkItem,
   getWorkItems,
@@ -124,4 +140,5 @@ module.exports = {
   assignWorkItem,
   transitionWorkItem,
   getWorkItemActivities,
+  addComment,
 };

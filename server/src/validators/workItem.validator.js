@@ -115,11 +115,20 @@ const transitionWorkItemSchema = z.object({
     .min(0),
 });
 
+const addCommentSchema = z.object({
+  comment: z
+    .string({ required_error: "Comment is required" })
+    .trim()
+    .min(1, "Comment cannot be empty")
+    .max(2000, "Comment cannot exceed 2000 characters"),
+});
+
 module.exports = {
   createWorkItemSchema,
   updateWorkItemSchema,
   assignWorkItemSchema,
   transitionWorkItemSchema,
+  addCommentSchema,
   WORK_ITEM_TYPES,
   WORK_ITEM_STATUSES,
   WORK_ITEM_PRIORITIES,

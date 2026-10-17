@@ -2522,3 +2522,46 @@
     overflow-x: auto;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Comment Composer & Bubble
+   -------------------------------------------------------------------------- */
+.comment-composer-form {
+  padding: 12px;
+  background-color: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.comment-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comment-text-input {
+  flex: 1;
+  height: 36px;
+  font-size: 13px;
+  background-color: #ffffff;
+}
+
+.marker-comment {
+  background-color: #6366F1 !important;
+}
+
+.timeline-comment-bubble {
+  background-color: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-left: 3px solid #6366F1;
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  margin-top: 4px;
+}
+
+.comment-bubble-text {
+  font-size: 13px;
+  color: var(--color-text-primary);
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
