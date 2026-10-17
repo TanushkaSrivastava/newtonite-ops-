@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "vitest run --fileParallelism=false"
+    "test": "vitest run --fileParallelism=false",
+    "seed": "node src/utils/seed.js"
   },
   "keywords": [],
   "author": "",

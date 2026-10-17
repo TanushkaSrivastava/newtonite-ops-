@@ -128,6 +128,12 @@ npm run client:dev
 # Client will run on http://localhost:5173 (with /api proxy to backend)
 ```
 
+### Seed Realistic Demo Data
+```bash
+npm run seed
+# Populates MongoDB with demo teams, engineers, incident tickets, and audit history
+```
+
 ### Run Automated Test Suite
 ```bash
 npm run test
