@@ -22,6 +22,22 @@ app.use(
 );
 app.use(express.json({ limit: "10mb" }));
 
+// Root API Welcome Endpoint
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    name: "Newtonite Operations Management API",
+    status: "online",
+    endpoints: {
+      health: "/api/health",
+      auth: "/api/auth",
+      teams: "/api/teams",
+      workItems: "/api/work-items",
+      dashboard: "/api/dashboard/summary",
+    },
+  });
+});
+
 // Health Check Endpoint
 app.get("/api/health", (req, res) => {
   res.status(200).json({
